@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db-master:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: user
+      MYSQL_USER: master
+      MYSQL_PASSWORD: master
+    command: --default-authentication-plugin=mysql_native_password --log-bin=mysql-bin --server-id=1
+    volumes:
+      - ./master-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - mysql-network
+
+  db-replica:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: user
+      MYSQL_USER: replica
+      MYSQL_PASSWORD: replica
+    command: --default-authentication-plugin=mysql_native_password --server-id=2
+    volumes:
+      - ./replica-data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    depends_on:
+      - db-master
+    networks:
+      - mysql-network
+
+networks:
+  mysql-network:
+    driver: bridge

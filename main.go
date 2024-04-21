@@ -38,7 +38,7 @@ func bookSeat(db *sql.DB, userId int) error {
 
     // 1. Find an available seat where user_id is NULL
     var seatID int
-    query := `SELECT id FROM seat WHERE user_id IS NULL ORDER BY id LIMIT 1 FOR UPDATE`
+    query := `SELECT id FROM seat WHERE user_id IS NULL ORDER BY id LIMIT 1 FOR SHARE`
     err = tx.QueryRow(query).Scan(&seatID)
     if err != nil {
         if err == sql.ErrNoRows {
